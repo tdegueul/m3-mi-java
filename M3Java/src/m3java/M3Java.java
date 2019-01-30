@@ -1,8 +1,6 @@
 package m3java;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.rascalmpl.interpreter.Evaluator;
 import org.rascalmpl.interpreter.env.GlobalEnvironment;
@@ -10,6 +8,9 @@ import org.rascalmpl.interpreter.env.ModuleEnvironment;
 import org.rascalmpl.interpreter.load.StandardLibraryContributor;
 import org.rascalmpl.library.lang.java.m3.internal.EclipseJavaCompiler;
 import org.rascalmpl.values.ValueFactoryFactory;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.ISet;
@@ -20,7 +21,7 @@ import io.usethesource.vallang.IValueFactory;
 
 public class M3Java {
 	public void run(String jar) {
-		Map<String, String> mis = new HashMap<>();
+		Multimap<String, String> mis = ArrayListMultimap.create();
 		IValueFactory vf = ValueFactoryFactory.getValueFactory();
 		EclipseJavaCompiler ejc = new EclipseJavaCompiler(vf);
 		Evaluator eval = createRascalEvaluator(vf);
@@ -35,12 +36,12 @@ public class M3Java {
 		rel.forEach(e -> {
 			ITuple t = (ITuple) e;
 			ISourceLocation md = (ISourceLocation) t.get(0);
-			ISourceLocation mi = (ISourceLocation) t.get(0);
+			ISourceLocation mi = (ISourceLocation) t.get(1);
 			mis.put(md.toString(), mi.toString());
 		});
 
-		mis.entrySet().forEach(e -> {
-			System.out.println(e.getKey() + " -> " + e.getValue());
+		mis.keySet().forEach(md -> {
+			System.out.println(md + " -> " + mis.get(md));
 		});
 	}
 
